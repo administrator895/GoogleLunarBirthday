@@ -1,3 +1,5 @@
-# DAV 客户端（含 icalendar / vobject 依赖）与农历换算
-caldav>=3.7,<4
-lunardate==0.3.0
+# 脚本直接 import 的库，逐个写明，不依赖任何包的间接依赖
+caldav>=3.7,<4        # Google 日历的读写客户端
+vobject>=0.9.9        # 解析通讯录里的联系人卡片
+icalendar>=6          # 生成日历事件
+lunardate==0.3.0      # 农历日期换算成公历
