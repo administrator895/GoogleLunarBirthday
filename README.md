@@ -22,7 +22,6 @@
 
 打开 [Google 日历](https://calendar.google.com)，创建新日历。
 
-
 名字填 **农历生日**（支持自定义，但是要和 `config.py` 里写的一致，`config.py` 里默认为「农历生日」），其他不用改，点保存。
 
 建议这个日历只放农历生日，别和工作日程混在一起——以后想整体关提醒、整体换颜色都方便。
@@ -48,7 +47,6 @@
 填好之后不用做别的，等程序下次运行，生日就会出现在日历里。
 
 
-
 ## 跑起来
 
 ### 方法一：放到 GitHub 上每天自动跑（推荐）
@@ -56,7 +54,7 @@
 优点是电脑关机也照跑，不用管。
 
 1. 打开 [新建仓库](https://github.com/new)，填个名字，**务必选 Private（私有）**，其他默认，创建；
-2. 把这几个文件传上去（网页上点 `Add file → Upload files`，整个文件夹拖进去也可以）：
+2. 把这几个文件传上去：
 
    ```
    sync_birthdays.py
@@ -74,11 +72,11 @@
    | `GCONTACTS_EMAIL` | 你的 Gmail 完整地址 |
    | `GCONTACTS_PASSWORD` | 第一件准备工作里那 16 位密码 |
 
-   名字必须一字不差，程序就是按这两个名字去读的。忘了怎么加可以看 [GitHub 官方说明](https://docs.github.com/zh/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)。
+   名称必须一字不差，程序就是按这两个名字去读的。忘了怎么加可以看 [GitHub 官方说明](https://docs.github.com/zh/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)。
 
 4. 到仓库的 `Actions` 页面，左边选 `sync-birthdays`，右边点 `Run workflow` 手动跑一次，看看有没有报错。
 
-之后每天凌晨 3 点（北京时间）会自动跑。想改时间，编辑 `.github/workflows/sync-birthdays.yml` 里那行定时设置即可——那行写的是 UTC 时间，比北京时间晚 8 小时，比如北京时间 3 点要写成 `0 19 * * *`。
+之后每天凌晨 3 点（北京时间）会自动跑。想改时间，编辑 `.github/workflows/sync-birthdays.yml`。
 
 ### 方法二：在自己电脑上跑
 
@@ -91,8 +89,6 @@ python sync_birthdays.py
 ```
 
 
-
-
 ## 出错了怎么办
 
 出错不会「悄悄地少一条」，而是让这次运行直接失败，并告诉你是哪里不对。所有报错都长这样：
@@ -100,7 +96,6 @@ python sync_birthdays.py
 ```
 [E008] 张三：标签「农历生日」的日期没有年份（--08-15），请到通讯录里补上出生年份
 ```
-
 
 | 错误码 | 什么意思 | 怎么改 |
 |---|---|---|
@@ -120,7 +115,6 @@ python sync_birthdays.py
 | E014 | 有生日但没有任何名字 | 姓名和昵称都空着，补一个 |
 
 另外有一条保护：**只要有任何一个联系人的数据读不懂，这次就不删任何事件**。「读不懂」和「人已经被删掉」看起来一样，宁可先留着；你改好再跑一次，程序会自己把该删的删掉。
-
 
 
 ## 你可能会问
