@@ -38,13 +38,12 @@ ERRORS = {
     "E005": "卡片解析失败",
     "E006": "农历标签没有填日期",
     "E007": "日期格式无法识别",
-    "E008": "日期缺少年份",
-    "E009": "月份超出 1-12",
-    "E010": "日期超出 1-30",
-    "E011": "农历日期无法换算",
-    "E012": "事件写入失败",
-    "E013": "事件删除失败",
-    "E014": "有农历生日但没有任何姓名",
+    "E008": "月份超出 1-12",
+    "E009": "日期超出 1-30",
+    "E010": "农历日期无法换算",
+    "E011": "事件写入失败",
+    "E012": "事件删除失败",
+    "E013": "有农历生日但没有任何姓名",
 }
 
 
@@ -180,28 +179,21 @@ def lunar_birthdays(v, who=""):
 
 
 def parse_lunar_month_day(el, who="", label=""):
-    """从 X-ABDATE 取出 (月, 日)，丢弃年份。
-
-    通讯录的日期可以不写年份，此时存成 --08-15 或用 1604 当占位年，两种都没有可用的公历年。
-    猜一个年份会让整条换算偏移，所以一律报错让人去补。
+    """从 X-ABDATE 取出 (月, 日)，年份丢弃不用。
     """
     raw = str(el.value).strip()
     m = re.match(r"^(?:(\d{4})-|-{2})(\d{1,2})-(\d{1,2})", raw)
     if not m:
         raise BirthdayError("E007", f"{who}：标签「{label}」的日期格式无法识别（{raw}）")
 
-    year, month, day = m.group(1), int(m.group(2)), int(m.group(3))
-    omit = {str(k).upper() for k in el.params}
-    if year is None or year == "1604" or "X-APPLE-OMIT-YEAR" in omit:
-        raise BirthdayError(
-            "E008", f"{who}：标签「{label}」的日期没有年份（{raw}），请到通讯录里补上出生年份")
+    month, day = int(m.group(2)), int(m.group(3))
     if not 1 <= month <= 12:
         raise BirthdayError(
-            "E009", f"{who}：标签「{label}」的月份是 {month}，农历只有 1-12 月（{raw}）")
+            "E008", f"{who}：标签「{label}」的月份是 {month}，农历只有 1-12 月（{raw}）")
     if not 1 <= day <= 30:
         # 这个字段按公历校验，31 号能填进去，但农历每月最多 30 天
         raise BirthdayError(
-            "E010", f"{who}：标签「{label}」的日期是 {day} 号，农历每月最多 30 天（{raw}）")
+            "E009", f"{who}：标签「{label}」的日期是 {day} 号，农历每月最多 30 天（{raw}）")
     return month, day
 
 
@@ -218,7 +210,7 @@ def to_solar(year, month, day, leap=False):
             return lunardate.LunarDate(year, month, dd, leap).to_solar_date()
         except ValueError:
             continue
-    raise ValueError(err("E011", f"农历 {year} 年{'闰' if leap else ''}{month} 月 {day} 日不存在"))
+    raise ValueError(err("E010", f"农历 {year} 年{'闰' if leap else ''}{month} 月 {day} 日不存在"))
 
 
 def lunar_dates(year, month, day):
@@ -267,7 +259,7 @@ def build_events(cards):
                 continue
             if not name:
                 raise BirthdayError(
-                    "E014", f"卡片 {key}：有农历生日，但姓名和昵称都是空的，无法生成标题")
+                    "E013", f"卡片 {key}：有农历生日，但姓名和昵称都是空的，无法生成标题")
         except (BirthdayError, ValueError) as e:
             errors.append(str(e))
             continue
@@ -426,7 +418,7 @@ def main():
                     else:
                         created += 1
                 except Exception as e:
-                    failed.append(err("E012", f"写入 {uid}：{e}"))
+                    failed.append(err("E011", f"写入 {uid}：{e}"))
 
             # 解析出错时跳过删除：此时「算不出来」可能只是数据读不懂，不是用户删了联系人
             if errors:
@@ -439,7 +431,7 @@ def main():
                             raise RuntimeError(f"HTTP {r.status}")
                         deleted += 1
                     except Exception as e:
-                        failed.append(err("E013", f"删除 {uid}：{e}"))
+                        failed.append(err("E012", f"删除 {uid}：{e}"))
     except AuthorizationError:
         sys.exit(err("E002", "Google 认证失败：确认 GCONTACTS_EMAIL 是完整邮箱、"
                              "GCONTACTS_PASSWORD 是 16 位应用专用密码（不是登录密码）"))
