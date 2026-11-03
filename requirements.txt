@@ -1,0 +1,3 @@
+# DAV 客户端（含 icalendar / vobject 依赖）与农历换算
+caldav>=3.7,<4
+lunardate==0.3.0

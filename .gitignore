@@ -1,0 +1,9 @@
+# 通讯录原文一律不进仓库（脚本本身也不落盘，这里是双保险）
+contacts/
+*.vcf
+
+# 万一以后改回 OAuth，凭据文件也不能提交
+token.json
+client_secret.json
+
+__pycache__/
